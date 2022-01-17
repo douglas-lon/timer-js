@@ -1,0 +1,30 @@
+@charset "utf-8";
+
+body {
+    background-color: rgb(250, 240, 196);
+    text-align: center;
+}
+
+header {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: x-large;
+}
+
+main input {
+    max-width: 50px;
+    max-height: 100px;
+}
+
+select {
+    height: 50px;
+    width: 70px;
+    text-align: center;
+    font-size: 1.5em;
+    background-color: white;
+    border-radius: 10%;
+    border-width: 1px;
+}
+
+footer {
+    margin-top: 10px;
+}
