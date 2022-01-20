@@ -1,77 +1,90 @@
+let isPaused = false
+const time  = new Date(0)
 
-isPaused = false
-time  = new Date(0)
+const show = document.querySelector('div#timer')
+const btns = document.querySelector('div#btns')
 
-let hour = document.querySelector('select#hour')
-let minute  = document.querySelector('select#minutes')
-let second = document.querySelector('select#seconds')
-let show = document.querySelector('div#timer')
-let btns = document.querySelector('div#btns')
-
-let interval
-
-function startTimer() {
-     if (!isPaused) {
-        if (time.getTime() != 0) {
-            h = ('0' + time.getHours()).slice(-2)
-            m = ('0' + time.getMinutes()).slice(-2)
-            s = ('0' + time.getSeconds()).slice(-2)
-            show.innerHTML = `<p>${h}:${m}:${s}</p>`
+function startTimer(interval) {
+    console.log(interval)
+    if (!isPaused) {
+       if (time.getTime() != 0) {
+            min = ('0' + time.getMinutes()).slice(-2)
+            sec = ('0' + time.getSeconds()).slice(-2)
+            show.innerHTML = `<p>${min}:${sec}</p>`
             time.setSeconds(time.getSeconds() - 1)
-        } else {
-            clearInterval(interval)
-            parar()
-        }   
-     }
-}
-
-function createTimer() {
-    time.setHours(hour.value)
-    time.setMinutes(minute.value)
-    time.setSeconds(second.value)
-
-    show.innerHTML = '<p>Iniciando...</p>'
-    btns.innerHTML = null
-
-    btnPausar = configBtn('Pausar', function() {isPaused= !isPaused}, btns)
-    btnParar = configBtn('Parar', function() {parar()}, btns)
-    
-    interval = setInterval(startTimer, 1000)
-}
-
-function createSelectNumbers() {
-    show.innerHTML = null
-    show.appendChild(hour)
-    show.appendChild(minute)
-    show.appendChild(second)
-
-    createOptions(24, hour)
-    createOptions(60, minute)
-    createOptions(60, second)
-}
-
-function parar() {
-    clearInterval(interval)
-    createSelectNumbers()
-
-    btns.innerHTML = null
-    btnStart = configBtn('Start', function() {createTimer()}, btns)
-
-}
-
-function createOptions(maxNum, timeVar) {
-    for (let i=0;i <= maxNum;i++) {
-        let option = document.createElement('option')
-        option.innerText = i
-        option.setAttribute('value', `${i}`)
-        timeVar.appendChild(option)
+       } else {
+            stopTimer(interval)
+       }   
     }
 }
 
-function configBtn(val, func, parent) {
-    let btn = document.createElement('input')
-    btn.type = 'button'
-    btn.value = val
-    btn.onclick = func
-    parent.appendChild(btn)
+const createTimer = function(timeInputs) {
+    time.setMinutes(Number(timeInputs[0].value))
+    time.setSeconds(Number(timeInputs[1].value))
+    show.innerHTML = '<p>Iniciando...</p>'
+    btns.innerHTML = null
+    
+
+    let interval
+    interval = setInterval( function() { startTimer(interval) }, 1000)
+
+    createButton('Pause', function() {isPaused = !isPaused}, null, btns)
+    createButton('Stop', stopTimer, interval, btns)
 }
+
+const createHome = function() {
+
+    createInputs('timer-numbers', '00', show)
+    let colon = document.createElement('span')
+    colon.innerText = ':'
+    show.appendChild(colon)
+    createInputs('timer-numbers', '00', show)
+
+    let timeInputs = document.querySelectorAll('.timer-numbers')
+
+    createButton('Start', createTimer, timeInputs, btns)
+
+}
+
+const stopTimer = function(interval) {
+    show.innerHTML = null
+    btns.innerHTML = null
+
+    clearInterval(interval)
+
+    if (isPaused) {
+        isPaused = false
+    }
+
+    createHome()
+}
+
+const verifyNumber = function(n) {
+    let nCode = n.charCode
+
+    if (nCode >= 48 && nCode <= 57) {
+        
+    } else {
+        n.preventDefault()
+    }
+}
+
+const createInputs = function(clas, value, parent ) {
+    let newInput = document.createElement('input')
+    newInput.setAttribute('class', clas)
+    newInput.setAttribute('value', value)
+    newInput.setAttribute('maxlength','2')
+    newInput.addEventListener('keypress', verifyNumber)
+    parent.appendChild(newInput)
+}
+
+const createButton = function(txt, fn, fnPar, parent) {
+    let btn = document.createElement('button')
+    btn.innerText = txt
+    btn.onclick = function() {fn(fnPar)}
+    parent.appendChild(btn)
+
+}
+
+window.addEventListener('load', createHome)
+

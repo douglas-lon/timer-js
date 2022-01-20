@@ -10,10 +10,14 @@ header {
     font-size: x-large;
 }
 
-main input {
-    max-width: 50px;
-    max-height: 100px;
+.timer-numbers {
+    min-width: 1em;
+    max-width: 3em;
+    text-align: center;
+    font-size: 5em;
 }
+
+
 
 select {
     height: 50px;
