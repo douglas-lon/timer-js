@@ -1,90 +1,104 @@
-let isPaused = false
-const time  = new Date(0)
+const timer = function() {
 
-const show = document.querySelector('div#timer')
-const btns = document.querySelector('div#btns')
+    let isPaused = false
+    let time  = new Date(0)
 
-function startTimer(interval) {
-    console.log(interval)
-    if (!isPaused) {
-       if (time.getTime() != 0) {
-            min = ('0' + time.getMinutes()).slice(-2)
-            sec = ('0' + time.getSeconds()).slice(-2)
-            show.innerHTML = `<p>${min}:${sec}</p>`
-            time.setSeconds(time.getSeconds() - 1)
-       } else {
-            stopTimer(interval)
-       }   
-    }
-}
+    let show = document.querySelector('div#timer')
+    let btns = document.querySelector('div#btns')
 
-const createTimer = function(timeInputs) {
-    time.setMinutes(Number(timeInputs[0].value))
-    time.setSeconds(Number(timeInputs[1].value))
-    show.innerHTML = '<p>Iniciando...</p>'
-    btns.innerHTML = null
-    
+    let createMyElements = {
 
-    let interval
-    interval = setInterval( function() { startTimer(interval) }, 1000)
-
-    createButton('Pause', function() {isPaused = !isPaused}, null, btns)
-    createButton('Stop', stopTimer, interval, btns)
-}
-
-const createHome = function() {
-
-    createInputs('timer-numbers', '00', show)
-    let colon = document.createElement('span')
-    colon.innerText = ':'
-    show.appendChild(colon)
-    createInputs('timer-numbers', '00', show)
-
-    let timeInputs = document.querySelectorAll('.timer-numbers')
-
-    createButton('Start', createTimer, timeInputs, btns)
-
-}
-
-const stopTimer = function(interval) {
-    show.innerHTML = null
-    btns.innerHTML = null
-
-    clearInterval(interval)
-
-    if (isPaused) {
-        isPaused = false
+        inputs: function(keyfn) {
+            
+            let newInput = document.createElement('input')
+            newInput.setAttribute('class', 'timer-numbers')
+            newInput.setAttribute('value', '00')
+            newInput.setAttribute('maxlength','2')
+            newInput.addEventListener('keypress', keyfn)
+            show.appendChild(newInput)
+        },
+        button: function(txt, fn, fnPar) {
+            let btn = document.createElement('button')
+            btn.innerText = txt
+            btn.onclick = function() {fn(fnPar)}
+            btns.appendChild(btn)
+        },
+        span: function() {
+            let colon = document.createElement('span')
+            colon.innerText = ':'
+            colon.setAttribute('id','col')
+            show.appendChild(colon)
+        }
     }
 
-    createHome()
-}
 
-const verifyNumber = function(n) {
-    let nCode = n.charCode
 
-    if (nCode >= 48 && nCode <= 57) {
+    function createInputPage() {
+
+        function verifyNumber(n) {
+            let nCode = n.charCode
         
-    } else {
-        n.preventDefault()
+            if (nCode >= 48 && nCode <= 57) {
+                
+            } else {
+                n.preventDefault()
+            }
+        }
+
+        createMyElements['inputs'](verifyNumber)
+        createMyElements['span']()
+        createMyElements['inputs'](verifyNumber)
+        
+        let timeInputs = document.querySelectorAll('.timer-numbers')
+        
+        createMyElements['button']('Start', createTimer, timeInputs)
+        
     }
+
+    function createTimer(timeInputs) {
+
+        time.setMinutes(Number(timeInputs[0].value))
+        time.setSeconds(Number(timeInputs[1].value))
+
+        show.innerHTML = '<p>Starting...</p>'
+        btns.innerHTML = null
+        
+        function startTimer(interval) {
+            
+            if (!isPaused) {
+                if (time.getTime() != 0) {
+                    min = ('0' + time.getMinutes()).slice(-2)
+                    sec = ('0' + time.getSeconds()).slice(-2)
+                    show.innerHTML = `<p>${min}:${sec}</p>`
+                    time.setSeconds(time.getSeconds() - 1)
+                } else {
+                    stopTimer(interval)
+                }   
+            }
+        }
+
+        let interval
+        interval = setInterval( function() { startTimer(interval) }, 1000)
+
+        createMyElements['button']('Pause', function() {isPaused = !isPaused}, null)
+        createMyElements['button']('Stop', stopTimer, interval)
+    }
+
+    function stopTimer(interval) {
+        show.innerHTML = null
+        btns.innerHTML = null
+
+        clearInterval(interval)
+
+        if (isPaused) {
+            isPaused = false
+        }
+
+        createInputPage()
+    }
+
+    window.addEventListener('load', createInputPage)
+
 }
 
-const createInputs = function(clas, value, parent ) {
-    let newInput = document.createElement('input')
-    newInput.setAttribute('class', clas)
-    newInput.setAttribute('value', value)
-    newInput.setAttribute('maxlength','2')
-    newInput.addEventListener('keypress', verifyNumber)
-    parent.appendChild(newInput)
-}
-
-const createButton = function(txt, fn, fnPar, parent) {
-    let btn = document.createElement('button')
-    btn.innerText = txt
-    btn.onclick = function() {fn(fnPar)}
-    parent.appendChild(btn)
-
-}
-
-window.addEventListener('load', createHome)
-
+timer()

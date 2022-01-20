@@ -17,6 +17,12 @@ header {
     font-size: 5em;
 }
 
+#col {
+    text-align: center;
+    font-size: 5em;
+    vertical-align:super;
+}
+
 
 
 select {
